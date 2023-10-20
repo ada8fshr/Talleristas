@@ -1,6 +1,6 @@
 const userName = document.getElementById("name");
 const userN = document.getElementById("id");
-const CertificateID = document.getElementById("IdC")
+const CertificateID = document.getElementById("IdC");
 const submitBtn = document.getElementById("submitBtn");
 const { PDFDocument, rgb, degrees } = PDFLib;
 
@@ -12,7 +12,7 @@ const capitalize = (str, lower = false) =>
 submitBtn.addEventListener("click", () => {
   const nameVal = capitalize(userName.value);
   const idVal = capitalize(userN.value);
-  
+
   if (nameVal.trim() !== "" && idVal.trim() !== "" && userName.checkValidity() && userN.checkValidity()) {
     generatePDF(nameVal, idVal);
   } else {
@@ -36,43 +36,41 @@ const generatePDF = async (name, id) => {
   const pages = pdfDoc.getPages();
   const firstPage = pages[0];
 
-const textSize = 30;
-const pageWidth = firstPage.getWidth();
-const pageHeight = firstPage.getHeight();
+  const textSize = 30;
+  const pageWidth = firstPage.getWidth();
+  const pageHeight = firstPage.getHeight();
 
-const nameTextWidth = CenturyGothic.widthOfTextAtSize(name, textSize);
-const nameTextHeight = CenturyGothic.widthOfTextAtSize(name, textSize);
-const idTextWidth = CenturyGothic.widthOfTextAtSize(id, textSize);
-const idTextHeight = CenturyGothic.widthOfTextAtSize(id, textSize);
+  const nameTextWidth = CenturyGothic.widthOfTextAtSize(name, textSize);
+  const nameTextHeight = CenturyGothic.widthOfTextAtSize(name, textSize);
+  const idTextWidth = CenturyGothic.widthOfTextAtSize(id, textSize);
+  const idTextHeight = CenturyGothic.widthOfTextAtSize(id, textSize);
 
-const IdC = generateUniqueIdC();
+  const IdC = generateUniqueIdC();
 
-const idCTextWidth = CenturyGothic.widthOfTextAtSize(id, textSize);
-const idCTextHeight = CenturyGothic.widthOfTextAtSize(id, textSize);
+  const idCTextWidth = CenturyGothic.widthOfTextAtSize(IdC, textSize); 
 
+  const totalTextWidth = Math.max(nameTextWidth, idTextWidth); 
+  const totalTextHeight = Math.max(nameTextHeight, idTextHeight);
+  const centerX = (pageWidth - totalTextWidth) / 2;
+  const centerY = (pageHeight - totalTextHeight) / 2;
 
-const totalTextWidth = Math.max(nameTextWidth, idTextWidth);
-const totalTextHeight = Math.max(nameTextHeight, idTextHeight);
-const centerX = (pageWidth - totalTextWidth) / 2;
-const centerY = (pageHeight - totalTextHeight) / 2;
-
-firstPage.drawText(name, {
-  x: centerX,
-  y: 280,
-  size: textSize,
-});
+  firstPage.drawText(name, {
+    x: centerX,
+    y: 280,
+    size: textSize,
+  });
 
   firstPage.drawText(id, {
-    x: 330, 
+    x: 330,
     y: 245,
     size: 15,
   });
 
   firstPage.drawText(IdC, {
-    x: 50, 
+    x: 48,
     y: 75,
     size: 12,
-    color: rgb(68/255, 124/255, 66/255), // Color #447c42 en formato RGB
+    color: rgb(68/255, 124/255, 66/255), 
   });
 
   const pdfBytes = await pdfDoc.save();
@@ -86,6 +84,12 @@ firstPage.drawText(name, {
 };
 
 const generateUniqueIdC = () => {
-  const timestamp = new Date().getTime();
-  return `ID Único del Certificado: ${timestamp}`;
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+  const idLength = 20; 
+  let id = "ID único del certificado: ";
+  for (let i = 0; i < idLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    id += characters[randomIndex];
+  }
+  return id;
 };
