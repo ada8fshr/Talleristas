@@ -22,9 +22,13 @@ submitBtn.addEventListener("click", () => {
 });
 
 const generatePDF = async (name, id) => {
+
+  const fileName = `${name.replace(/\s/g, " ")}.pdf`;
+
   const existingPdfBytes = await fetch("./Certificado.pdf").then((res) =>
     res.arrayBuffer()
   );
+
 
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
   pdfDoc.registerFontkit(fontkit);
@@ -75,11 +79,10 @@ const generatePDF = async (name, id) => {
 
   const pdfBytes = await pdfDoc.save();
   console.log("Certificado Creado");
-  var file = new File(
-    [pdfBytes], "Talleristas", {
-      type: "application/pdf;charset=utf-8",
-    }
-  );
+  var file = new File([pdfBytes], fileName, {
+    type: "application/pdf;charset=utf-8",
+  });
+
   saveAs(file);
 };
 
