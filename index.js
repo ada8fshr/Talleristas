@@ -64,7 +64,7 @@ firstPage.drawText(name, {
   const pdfBytes = await pdfDoc.save();
   console.log("Certificado Creado");
   var file = new File(
-    [pdfBytes], "Olimpiadas Matemáticas 2023", {
+    [pdfBytes], "Tallerista Expo - Ucundinamarca", {
       type: "application/pdf;charset=utf-8",
     }
   );
