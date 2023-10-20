@@ -69,9 +69,9 @@ firstPage.drawText(name, {
   });
 
   firstPage.drawText(IdC, {
-    x: 60, 
+    x: 50, 
     y: 75,
-    size: 11,
+    size: 12,
     color: rgb(68/255, 124/255, 66/255), // Color #447c42 en formato RGB
   });
 
@@ -87,5 +87,5 @@ firstPage.drawText(name, {
 
 const generateUniqueIdC = () => {
   const timestamp = new Date().getTime();
-  return `ID Único del Certificado : ${timestamp}`;
+  return `ID Único del Certificado: ${timestamp}`;
 };
