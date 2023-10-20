@@ -1,5 +1,6 @@
 const userName = document.getElementById("name");
 const userN = document.getElementById("id");
+const CertificateID = document.getElementById("IdC")
 const submitBtn = document.getElementById("submitBtn");
 const { PDFDocument, rgb, degrees } = PDFLib;
 
@@ -10,14 +11,17 @@ const capitalize = (str, lower = false) =>
 
 submitBtn.addEventListener("click", () => {
   const nameVal = capitalize(userName.value);
-  if (nameVal.trim() !== "" && userName.checkValidity()) {
-    generatePDF(nameVal);
+  const idVal = capitalize(userN.value);
+  
+  if (nameVal.trim() !== "" && idVal.trim() !== "" && userName.checkValidity() && userN.checkValidity()) {
+    generatePDF(nameVal, idVal);
   } else {
     userName.reportValidity();
+    userN.reportValidity();
   }
 });
 
-const generatePDF = async (name) => {
+const generatePDF = async (name, id) => {
   const existingPdfBytes = await fetch("./Certificado.pdf").then((res) =>
     res.arrayBuffer()
   );
@@ -32,51 +36,56 @@ const generatePDF = async (name) => {
   const pages = pdfDoc.getPages();
   const firstPage = pages[0];
 
-  const textSize = 30;
-  const pageWidth = firstPage.getWidth();
-  const pageHeight = firstPage.getHeight();
+const textSize = 30;
+const pageWidth = firstPage.getWidth();
+const pageHeight = firstPage.getHeight();
 
-  const nameTextWidth = CenturyGothic.widthOfTextAtSize(name, textSize);
-  const nameTextHeight = CenturyGothic.widthOfTextAtSize(name, textSize);
-  
-  // Generar un ID único
-  const id = generateUniqueId();
-  
-  // Calcular el ancho y alto del ID
-  const idTextWidth = CenturyGothic.widthOfTextAtSize(id, textSize);
-  const idTextHeight = CenturyGothic.widthOfTextAtSize(id, textSize);
+const nameTextWidth = CenturyGothic.widthOfTextAtSize(name, textSize);
+const nameTextHeight = CenturyGothic.widthOfTextAtSize(name, textSize);
+const idTextWidth = CenturyGothic.widthOfTextAtSize(id, textSize);
+const idTextHeight = CenturyGothic.widthOfTextAtSize(id, textSize);
 
-  const totalTextWidth = Math.max(nameTextWidth, idTextWidth);
-  const totalTextHeight = Math.max(nameTextHeight, idTextHeight);
-  const centerX = (pageWidth - totalTextWidth) / 2;
-  const centerY = (pageHeight - totalTextHeight) / 2;
+const IdC = generateUniqueIdC();
 
-  firstPage.drawText(name, {
-    x: centerX,
-    y: 280,
-    size: textSize,
+const idCTextWidth = CenturyGothic.widthOfTextAtSize(id, textSize);
+const idCTextHeight = CenturyGothic.widthOfTextAtSize(id, textSize);
+
+
+const totalTextWidth = Math.max(nameTextWidth, idTextWidth);
+const totalTextHeight = Math.max(nameTextHeight, idTextHeight);
+const centerX = (pageWidth - totalTextWidth) / 2;
+const centerY = (pageHeight - totalTextHeight) / 2;
+
+firstPage.drawText(name, {
+  x: centerX,
+  y: 280,
+  size: textSize,
+});
+
+  firstPage.drawText(id, {
+    x: 330, 
+    y: 245,
+    size: 15,
   });
 
-  // Dibujar el ID en el PDF
-  firstPage.drawText(id, {
+  firstPage.drawText(IdC, {
     x: 60, 
     y: 75,
     size: 11,
-    
+    color: rgb(68/255, 124/255, 66/255), // Color #447c42 en formato RGB
   });
 
   const pdfBytes = await pdfDoc.save();
   console.log("Certificado Creado");
   var file = new File(
-    [pdfBytes], "Tallerista Expo - Ucundinamarca", {
+    [pdfBytes], "Talleristas", {
       type: "application/pdf;charset=utf-8",
     }
   );
   saveAs(file);
 };
 
-// Función para generar un ID único
-const generateUniqueId = () => {
+const generateUniqueIdC = () => {
   const timestamp = new Date().getTime();
-  return `Certificado ID :${timestamp}`;
+  return `ID Único del Certificado : ${timestamp}`;
 };
