@@ -10,17 +10,14 @@ const capitalize = (str, lower = false) =>
 
 submitBtn.addEventListener("click", () => {
   const nameVal = capitalize(userName.value);
-  const idVal = capitalize(userN.value);
-  
-  if (nameVal.trim() !== "" && idVal.trim() !== "" && userName.checkValidity() && userN.checkValidity()) {
-    generatePDF(nameVal, idVal);
+  if (nameVal.trim() !== "" && userName.checkValidity()) {
+    generatePDF(nameVal);
   } else {
     userName.reportValidity();
-    userN.reportValidity();
   }
 });
 
-const generatePDF = async (name, id) => {
+const generatePDF = async (name) => {
   const existingPdfBytes = await fetch("./Certificado.pdf").then((res) =>
     res.arrayBuffer()
   );
@@ -35,30 +32,37 @@ const generatePDF = async (name, id) => {
   const pages = pdfDoc.getPages();
   const firstPage = pages[0];
 
-const textSize = 30;
-const pageWidth = firstPage.getWidth();
-const pageHeight = firstPage.getHeight();
+  const textSize = 30;
+  const pageWidth = firstPage.getWidth();
+  const pageHeight = firstPage.getHeight();
 
-const nameTextWidth = CenturyGothic.widthOfTextAtSize(name, textSize);
-const nameTextHeight = CenturyGothic.widthOfTextAtSize(name, textSize);
-const idTextWidth = CenturyGothic.widthOfTextAtSize(id, textSize);
-const idTextHeight = CenturyGothic.widthOfTextAtSize(id, textSize);
+  const nameTextWidth = CenturyGothic.widthOfTextAtSize(name, textSize);
+  const nameTextHeight = CenturyGothic.widthOfTextAtSize(name, textSize);
+  
+  // Generar un ID único
+  const id = generateUniqueId();
+  
+  // Calcular el ancho y alto del ID
+  const idTextWidth = CenturyGothic.widthOfTextAtSize(id, textSize);
+  const idTextHeight = CenturyGothic.widthOfTextAtSize(id, textSize);
 
-const totalTextWidth = Math.max(nameTextWidth, idTextWidth);
-const totalTextHeight = Math.max(nameTextHeight, idTextHeight);
-const centerX = (pageWidth - totalTextWidth) / 2;
-const centerY = (pageHeight - totalTextHeight) / 2;
+  const totalTextWidth = Math.max(nameTextWidth, idTextWidth);
+  const totalTextHeight = Math.max(nameTextHeight, idTextHeight);
+  const centerX = (pageWidth - totalTextWidth) / 2;
+  const centerY = (pageHeight - totalTextHeight) / 2;
 
-firstPage.drawText(name, {
-  x: centerX,
-  y: 280,
-  size: textSize,
-});
+  firstPage.drawText(name, {
+    x: centerX,
+    y: 280,
+    size: textSize,
+  });
 
+  // Dibujar el ID en el PDF
   firstPage.drawText(id, {
-    x: 330, 
-    y: 245,
-    size: 15,
+    x: 60, 
+    y: 75,
+    size: 11,
+    
   });
 
   const pdfBytes = await pdfDoc.save();
@@ -69,4 +73,10 @@ firstPage.drawText(name, {
     }
   );
   saveAs(file);
+};
+
+// Función para generar un ID único
+const generateUniqueId = () => {
+  const timestamp = new Date().getTime();
+  return `Certificado ID :${timestamp}`;
 };
